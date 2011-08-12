@@ -1,0 +1,72 @@
+==========================================================================
+      ALERT's KESI - Knowledge Extractor for Structured Information 
+==========================================================================
+
+The Knowledge Extractor for Structured Information (or KESI) is a component
+of the ALERT platform [1] design to to gather information from source code 
+repositories and from issue/bug tracking systems. Once the information has
+been gathered, is transformed into a format known by the rest of the
+components of the platform and published in an Enterprise Service Bus (ESB).
+
+The information obtained by the KESI is critical in the following scenarios:
+ - Recommend a developer which bug to solve.
+ - Detect duplicated bugs.
+ - Let the developer know about buggy parts of the code.
+ - Identifying inactive developers and orphaned parts of the code
+
+== Features ==
+ - Supports several types of repositories
+   - Source Code Management Systems (SCM): Subversion
+   - Issue tracking systems (ITS): Bugzilla
+ - Uses external tools for gathering information
+   - Source Code Management Systems (SCM): CVSAnalY [2]
+   - Issue tracking systems (ITS): Bicho [3]
+ - Incremental analysis
+
+
+== Futher work ==
+ - Support other types of repositories:
+   - SCM: CVS, Git
+   - ITS: JIRA
+ - Publish the changes in the repositories as events in the ESB
+
+== Requirements ==
+
+ - Any implementation of Java Platform, Standard Edition (>= 1.6)
+ - JDBC driver for MySQL
+ - JavaMail API (>= 1.4.4)
+ - CVSAnalY (>= 2.0) [2]
+ - Bicho (>= 0.9) [3]
+
+== Configuration ==
+
+TODO.
+
+We may include here some info about:
+ - Sensors
+ - Properties files
+ - Paths (tools, pythonpath and so on)
+ - Petals ESB
+ - Tools
+ - Database configuration (for tools)
+
+== License ==
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at
+your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+for more details.
+
+The full version of this license can be found in the file COPYING,
+distributed along with this program.
+
+== Links ==
+
+[1] http://www.alert-project.eu/
+[2] https://libresoft.es/research/software/cvsanaly
+[3] https://libresoft.es/research/software/bicho

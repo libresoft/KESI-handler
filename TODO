@@ -1,0 +1,25 @@
+= TODO =
+
+== Configuration ==
+ [] Repositories preferences
+
+== Sensors ==
+ [] Hooks for SCMs
+    [] CVS
+    [] SVN
+    [] Git
+
+== Repositories ==
+ [] CVS
+ [] Git
+ [] JIRA
+
+== Runtime ==
+ [] Initial import
+ [] Petals ESB connection
+
+== Extractors ==
+ [] JIRA support
+
+== Documentation ==
+ [] Configuration
