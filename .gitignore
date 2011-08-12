@@ -1,0 +1,8 @@
+# Ignore generated files (Java class)
+*.class
+
+# Ignore Eclipse files and directories
+.classpath
+.project
+.settings
+bin
