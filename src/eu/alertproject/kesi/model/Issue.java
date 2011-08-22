@@ -31,7 +31,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
+@XmlSeeAlso({StructuredKnowledgeSource.class, IssueTracker.class})
 @XmlRootElement(name = "issue")
 public class Issue extends Entity {
     /* Severity values */

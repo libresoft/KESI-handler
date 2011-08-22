@@ -37,6 +37,8 @@ import eu.alertproject.kesi.model.Person;
 
 public class ITSDatabaseExtractor extends DatabaseExtractor {
     /* ITS QUERIES */
+    private static final String ITS_QUERY_ALL_ISSUES = "SELECT issue "
+            + "FROM issues";
     private static final String ITS_QUERY_ISSUE = "SELECT id, summary, description,"
             + "status, resolution, priority, submitted_by, submitted_on, assigned_to "
             + "FROM issues WHERE issue = ?";
@@ -48,6 +50,7 @@ public class ITSDatabaseExtractor extends DatabaseExtractor {
             + "submitted_by, submitted_on FROM attachments WHERE issue_id = ?";
 
     /* ITS Row fields */
+    private static final String ITS_ISSUE_KEY = "issue";
     private static final String ITS_ISSUE_ID = "id";
     private static final String ITS_ISSUE_SUMMARY = "summary";
     private static final String ITS_ISSUE_DESCRIPTION = "description";
@@ -75,11 +78,42 @@ public class ITSDatabaseExtractor extends DatabaseExtractor {
         people = new HashMap<Integer, Person>();
     }
 
-    public Issue getIssue(String issueID) {
-        PreparedStatement stmt;
-        ResultSet rs;
-
+    public ArrayList<Issue> getIssues() {
         try {
+            PreparedStatement stmt;
+            ResultSet rs;
+            ArrayList<Issue> issues = new ArrayList<Issue>();
+
+            stmt = conn.prepareStatement(ITS_QUERY_ALL_ISSUES);
+            rs = executeQuery(stmt);
+
+            while (rs.next()) {
+                String issueKey; /* Commit id used in the database */
+                Issue issue;
+
+                issueKey = rs.getString(ITS_ISSUE_KEY);
+                issue = getIssue(issueKey);
+
+                if (issue == null) {
+                    System.err.println("Error getting issue " + issueKey);
+                    return null;
+                }
+
+                issues.add(issue);
+            }
+
+            return issues;
+        } catch (SQLException e) {
+            System.err.println("Error getting data. " + e.getMessage());
+            return null;
+        }
+    }
+
+    public Issue getIssue(String issueID) {
+        try {
+            PreparedStatement stmt;
+            ResultSet rs;
+
             /* Variables for storing temporal issue's info */
             int id; /* Issue id used in the database */
             int submitterID;

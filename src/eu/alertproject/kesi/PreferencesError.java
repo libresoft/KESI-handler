@@ -19,15 +19,11 @@
  *
  */
 
-package eu.alertproject.kesi.model;
+package eu.alertproject.kesi;
 
-import java.net.URI;
+public class PreferencesError extends Exception {
 
-public class Repository extends StructuredKnowledgeSource {
-
-    public Repository() {}
-
-    public Repository(URI uri, String type) {
-        super(uri, type);
+    public PreferencesError(String message) {
+        super(message);
     }
 }

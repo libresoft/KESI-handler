@@ -23,34 +23,11 @@ package eu.alertproject.kesi.model;
 
 import java.net.URI;
 
-import javax.xml.bind.annotation.XmlElement;
-
-public class IssueTracker extends Entity {
-    private URI url;
-    private String type;
+public class IssueTracker extends StructuredKnowledgeSource {
 
     public IssueTracker() {}
 
-    public IssueTracker(URI url, String type) {
-        this.url = url;
-        this.type = type;
-    }
-
-    @XmlElement()
-    public URI getUrl() {
-        return url;
-    }
-
-    public void setUrl(URI url) {
-        this.url = url;
-    }
-
-    @XmlElement()
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    public IssueTracker(URI uri, String type) {
+        super(uri, type);
     }
 }

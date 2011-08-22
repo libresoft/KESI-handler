@@ -29,22 +29,32 @@ public class Job {
     private String type;
     private String url;
     private String id;
+    private boolean startUp;
 
     public Job(String type, String url, String id) {
         this.type = type;
         this.url = url;
         this.id = id;
+        this.startUp = false;
     }
 
     public String getType() {
         return type;
     }
 
-    public String getUrl() {
+    public String getURL() {
         return url;
     }
 
     public String getID() {
         return id;
+    }
+
+    public boolean isSetToStartUp() {
+        return startUp;
+    }
+
+    public void setStartUp(boolean startUp) {
+        this.startUp = startUp;
     }
 }

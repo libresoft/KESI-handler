@@ -21,9 +21,12 @@
 
 package eu.alertproject.kesi;
 
+import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 import javax.xml.bind.JAXBException;
+
+import eu.alertproject.kesi.model.Commit;
 
 public class SCMExtractor extends KnowledgeExtractor {
     /* Tool for extracting data from SCMs */
@@ -52,17 +55,8 @@ public class SCMExtractor extends KnowledgeExtractor {
 
     @Override
     public String getExtractedData(String url, String type, String id) {
-        SCMDatabaseExtractor extractor;
-
-        String username = prefs.get(KESI.PREF_DB_USERNAME, "");
-        String password = prefs.get(KESI.PREF_DB_PASSWORD, "");
-        String host = prefs.get(KESI.PREF_DB_HOST, KESI.DEF_DB_HOSTNAME);
-        String port = prefs.get(KESI.PREF_DB_PORT, KESI.DEF_DB_PORT);
-        String database = prefs.get(KESI.PREF_DB_DATABASE_SCM, "");
-
         try {
-            extractor = new SCMDatabaseExtractor(KESI.DEF_DB_DBMS, username,
-                        password, host, port, database);
+            SCMDatabaseExtractor extractor = createExtractor(url, type);
             return extractor.getCommit(id).toXML();
         } catch (DriverNotSupportedError e) {
             System.err.println(e.getMessage());
@@ -75,5 +69,57 @@ public class SCMExtractor extends KnowledgeExtractor {
                                + e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public String[] getFullExtractedData(String url, String type) {
+        try {
+            int size;
+            String[] commitsXML;
+
+            SCMDatabaseExtractor extractor = createExtractor(url, type);
+            ArrayList<Commit> commits = extractor.getCommits();
+
+            size = commits.size();
+            commitsXML = new String[size];
+
+            for (int i = 0; i < size; i++) {
+                Commit commit = commits.get(i);
+
+                if (commit == null) {
+                    System.err.println("Error. Commit not extracted.");
+                    continue;
+                }
+
+                commitsXML[i] = commit.toXML();
+            }
+
+            return commitsXML;
+        } catch (DriverNotSupportedError e) {
+            System.err.println(e.getMessage());
+            return null;
+        } catch (DatabaseConnectionError e) {
+            System.err.println(e.getMessage());
+            return null;
+        } catch (JAXBException e) {
+            System.err.println("Error marshaling data to XML. "
+                               + e.getMessage());
+            return null;
+        }
+    }
+
+    private SCMDatabaseExtractor createExtractor(String ulr, String type)
+            throws DriverNotSupportedError, DatabaseConnectionError {
+        SCMDatabaseExtractor extractor;
+
+        String username = prefs.get(KESI.PREF_DB_USERNAME, "");
+        String password = prefs.get(KESI.PREF_DB_PASSWORD, "");
+        String host = prefs.get(KESI.PREF_DB_HOST, KESI.DEF_DB_HOSTNAME);
+        String port = prefs.get(KESI.PREF_DB_PORT, KESI.DEF_DB_PORT);
+        String database = prefs.get(KESI.PREF_DB_DATABASE_SCM, "");
+
+        extractor = new SCMDatabaseExtractor(KESI.DEF_DB_DBMS, username,
+                        password, host, port, database);
+        return extractor;
     }
 }

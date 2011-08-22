@@ -23,8 +23,7 @@ The information obtained by the KESI is critical in the following scenarios:
    - Issue tracking systems (ITS): Bicho [3]
  - Incremental analysis
 
-
-== Futher work ==
+== Further work ==
  - Support other types of repositories:
    - SCM: CVS, Git
    - ITS: JIRA

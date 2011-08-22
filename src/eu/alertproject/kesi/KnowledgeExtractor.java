@@ -21,6 +21,8 @@
 
 package eu.alertproject.kesi;
 
+import java.util.ArrayList;
+
 public abstract class KnowledgeExtractor extends Thread {
     private String extractor;
     private JobsQueue queue;
@@ -44,7 +46,7 @@ public abstract class KnowledgeExtractor extends Thread {
                 continue;
             }
 
-            String[] cmd = getCommandExtractor(job.getUrl(), job.getType());
+            String[] cmd = getCommandExtractor(job.getURL(), job.getType());
 
             tr = new ToolRunner();
             System.out.println("Processing job " + job.getID());
@@ -52,12 +54,26 @@ public abstract class KnowledgeExtractor extends Thread {
             System.out.println("Job processed. Result: " + result);
 
             if (result == 0) {
-                String data = getExtractedData(job.getUrl(), job.getType(),
-                                               job.getID());
-                if (data != null) {
-                    System.out.println(data);
+                // FIXME: this should be implemented as asynchronous in some way
+                if (job.isSetToStartUp()) {
+                    String[] data = getFullExtractedData(job.getURL(), job.getType());
+
+                    if (data != null) {
+                        for (String d : data) {
+                            System.out.println(d);
+                        }
+                    } else {
+                        System.err.println("Failured extraction");
+                    }
                 } else {
-                    System.err.println("Failured extraction");
+                    String data = getExtractedData(job.getURL(), job.getType(),
+                                                   job.getID());
+
+                    if (data != null) {
+                        System.out.println(data);
+                    } else {
+                        System.err.println("Failured extraction");
+                    }
                 }
             } else {
                 System.err.println("Failured job");
@@ -68,5 +84,7 @@ public abstract class KnowledgeExtractor extends Thread {
     public abstract String[] getCommandExtractor(String url, String type);
 
     public abstract String getExtractedData(String url, String type, String id);
+
+    public abstract String[] getFullExtractedData(String url, String type);
 
 }

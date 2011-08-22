@@ -23,11 +23,30 @@ package eu.alertproject.kesi.model;
 
 import java.net.URI;
 
-public class Repository extends StructuredKnowledgeSource {
+public abstract class StructuredKnowledgeSource extends Entity {
+    private URI uri;
+    private String type;
 
-    public Repository() {}
+    public StructuredKnowledgeSource() {}
 
-    public Repository(URI uri, String type) {
-        super(uri, type);
+    public StructuredKnowledgeSource(URI uri, String type) {
+        this.uri = uri;
+        this.type = type;
+    }
+
+    public URI getURI() {
+        return uri;
+    }
+
+    public void setURI(URI uri) {
+        this.uri = uri;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

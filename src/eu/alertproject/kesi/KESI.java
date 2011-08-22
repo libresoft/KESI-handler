@@ -61,17 +61,28 @@ public class KESI {
         ITSExtractor its;
         SCMExtractor scm;
 
+        /*
+         * TODO: queues should be singleton instances and shared by all
+         * the components.
+         */
         scmJobs = new JobsQueue();
         itsJobs = new JobsQueue();
 
-        handler = new SensorHandler(scmJobs, itsJobs);
-        handler.start();
+        try {
+            KnowledgeSourceManager.INSTANCE.loadKnowledgeSources();
+            KnowledgeSourceManager.INSTANCE.startUp(scmJobs, itsJobs);
+        } catch (PreferencesError e) {
+            throw new RuntimeException(e);
+        }
+
+        scm = new SCMExtractor(scmJobs);
+        scm.start();
 
         its = new ITSExtractor(itsJobs);
         its.start();
 
-        scm = new SCMExtractor(scmJobs);
-        scm.start();
+        handler = new SensorHandler(scmJobs, itsJobs);
+        handler.start();
 
         System.out.println("Running KESI component");
 

@@ -45,6 +45,8 @@ import eu.alertproject.kesi.model.Replace;
 
 public class SCMDatabaseExtractor extends DatabaseExtractor {
     /* SCM queries */
+    private static final String SCM_QUERY_ALL_COMMITS = "SELECT rev "
+            + "FROM scmlog";
     private static final String SCM_QUERY_COMMIT = "SELECT id, rev, date, message,"
             + "author_id, committer_id FROM scmlog WHERE rev = ?";
     private static final String SCM_QUERY_PERSON = "SELECT name, email "
@@ -108,11 +110,42 @@ public class SCMDatabaseExtractor extends DatabaseExtractor {
         people = new HashMap<Integer, Person>();
     }
 
-    public Commit getCommit(String commitKey) {
-        PreparedStatement stmt;
-        ResultSet rs;
-
+    public ArrayList<Commit> getCommits() {
         try {
+            PreparedStatement stmt;
+            ResultSet rs;
+            ArrayList<Commit> commits = new ArrayList<Commit>();
+
+            stmt = conn.prepareStatement(SCM_QUERY_ALL_COMMITS);
+            rs = executeQuery(stmt);
+
+            while (rs.next()) {
+                String commitKey; /* Commit id used in the database */
+                Commit commit;
+
+                commitKey = rs.getString(SCM_COMMIT_REVISION);
+                commit = getCommit(commitKey);
+
+                if (commit == null) {
+                    System.err.println("Error getting commit " + commitKey);
+                    return null;
+                }
+
+                commits.add(commit);
+            }
+
+            return commits;
+        } catch (SQLException e) {
+            System.err.println("Error getting data. " + e.getMessage());
+            return null;
+        }
+    }
+
+    public Commit getCommit(String commitKey) {
+        try {
+            PreparedStatement stmt;
+            ResultSet rs;
+
             /* Variables for storing temporal commit's info */
             int commitID; /* Commit id used in the database */
             int authorID;
@@ -141,7 +174,7 @@ public class SCMDatabaseExtractor extends DatabaseExtractor {
             committer = getPerson(rs.getInt(SCM_COMMITTER_ID));
 
             commit = new Commit(commitMessage, commitDate, commitRev, author,
-                    committer);
+                     committer);
 
             actions = getActions(commitID);
             for (Action action : actions) {
@@ -348,7 +381,9 @@ public class SCMDatabaseExtractor extends DatabaseExtractor {
         stmt.setInt(2, commitID);
         rs = executeQuery(stmt);
 
-        rs.first();
+        if (!rs.first()) {
+            return null;
+        }
 
         metrics = new Metrics();
 

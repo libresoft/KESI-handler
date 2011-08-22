@@ -21,9 +21,12 @@
 
 package eu.alertproject.kesi;
 
+import java.util.ArrayList;
 import java.util.prefs.Preferences;
 
 import javax.xml.bind.JAXBException;
+
+import eu.alertproject.kesi.model.Issue;
 
 public class ITSExtractor extends KnowledgeExtractor {
     /* Tool for extracting data from ITSs */
@@ -59,17 +62,8 @@ public class ITSExtractor extends KnowledgeExtractor {
 
     @Override
     public String getExtractedData(String url, String type, String id) {
-        ITSDatabaseExtractor extractor;
-
-        String username = prefs.get(KESI.PREF_DB_USERNAME, "");
-        String password = prefs.get(KESI.PREF_DB_PASSWORD, "");
-        String host = prefs.get(KESI.PREF_DB_HOST, KESI.DEF_DB_HOSTNAME);
-        String port = prefs.get(KESI.PREF_DB_PORT, KESI.DEF_DB_PORT);
-        String database = prefs.get(KESI.PREF_DB_DATABASE_ITS, "");
-
         try {
-            extractor = new ITSDatabaseExtractor(KESI.DEF_DB_DBMS, username,
-                        password, host, port, database);
+            ITSDatabaseExtractor extractor = createExtractor(url, type);
             return extractor.getIssue(id).toXML();
         } catch (DriverNotSupportedError e) {
             System.err.println(e.getMessage());
@@ -82,5 +76,57 @@ public class ITSExtractor extends KnowledgeExtractor {
                                + e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public String[] getFullExtractedData(String url, String type) {
+        try {
+            int size;
+            String[] issuesXML;
+
+            ITSDatabaseExtractor extractor = createExtractor(url, type);
+            ArrayList<Issue> issues = extractor.getIssues();
+
+            size = issues.size();
+            issuesXML = new String[size];
+
+            for (int i = 0; i < size; i++) {
+                Issue issue = issues.get(i);
+
+                if (issue == null) {
+                    System.err.println("Error. Issue not extracted.");
+                    continue;
+                }
+
+                issuesXML[i] = issue.toXML();
+            }
+
+            return issuesXML;
+        } catch (DriverNotSupportedError e) {
+            System.err.println(e.getMessage());
+            return null;
+        } catch (DatabaseConnectionError e) {
+            System.err.println(e.getMessage());
+            return null;
+        } catch (JAXBException e) {
+            System.err.println("Error marshaling data to XML. "
+                               + e.getMessage());
+            return null;
+        }
+    }
+
+    private ITSDatabaseExtractor createExtractor(String ulr, String type)
+            throws DriverNotSupportedError, DatabaseConnectionError {
+          ITSDatabaseExtractor extractor;
+
+          String username = prefs.get(KESI.PREF_DB_USERNAME, "");
+          String password = prefs.get(KESI.PREF_DB_PASSWORD, "");
+          String host = prefs.get(KESI.PREF_DB_HOST, KESI.DEF_DB_HOSTNAME);
+          String port = prefs.get(KESI.PREF_DB_PORT, KESI.DEF_DB_PORT);
+          String database = prefs.get(KESI.PREF_DB_DATABASE_ITS, "");
+
+          extractor = new ITSDatabaseExtractor(KESI.DEF_DB_DBMS, username,
+                          password, host, port, database);
+          return extractor;
     }
 }
