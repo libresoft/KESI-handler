@@ -21,15 +21,15 @@
 
 package eu.alertproject.kesi;
 
-import java.util.ArrayList;
-
 public abstract class KnowledgeExtractor extends Thread {
     private String extractor;
     private JobsQueue queue;
+    private EventPublisher publisher;
 
     public KnowledgeExtractor(String extractor, JobsQueue queue) {
         this.extractor = extractor;
         this.queue = queue;
+        publisher = new EventPublisher();
     }
 
     public void run() {
@@ -61,6 +61,7 @@ public abstract class KnowledgeExtractor extends Thread {
                     if (data != null) {
                         for (String d : data) {
                             System.out.println(d);
+                            publisher.publish("kesi:msg", d);
                         }
                     } else {
                         System.err.println("Failured extraction");
@@ -71,6 +72,7 @@ public abstract class KnowledgeExtractor extends Thread {
 
                     if (data != null) {
                         System.out.println(data);
+                        publisher.publish("kesi:msg", data);
                     } else {
                         System.err.println("Failured extraction");
                     }

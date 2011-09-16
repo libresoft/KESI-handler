@@ -42,6 +42,7 @@ public class KESI {
     public static final String PREF_DB_PORT = "port";
     public static final String PREF_DB_DATABASE_ITS = "database.its";
     public static final String PREF_DB_DATABASE_SCM = "database.scm";
+    public static final String PREF_PUB_URL = "url";
 
     /* Preference default values */
     public static final String DEF_SENSOR_PROTOCOL = "imaps";
@@ -52,6 +53,8 @@ public class KESI {
     public static final String DEF_DB_DBMS = "mysql";
     public static final String DEF_DB_HOSTNAME = "localhost";
     public static final String DEF_DB_PORT = "3306";
+
+    public static final String DEF_PUB_URL = "http://localhost:8085/petals/services/NotificationBrokerService?wsdl";
 
     private JobsQueue scmJobs;
     private JobsQueue itsJobs;

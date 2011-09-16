@@ -34,6 +34,8 @@ The information obtained by the KESI is critical in the following scenarios:
  - Any implementation of Java Platform, Standard Edition (>= 1.6)
  - JDBC driver for MySQL
  - JavaMail API (>= 1.4.4)
+ - ALERT's BrokerClient (= 0.0.1)
+ - Petals ESB (= 3.1.1)
  - CVSAnalY (>= 2.0) [2]
  - Bicho (>= 0.9) [3]
 
